@@ -15,7 +15,6 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 interface Produto {
   _id: string;
   codigo?: string;
-  gtin?: string;
   nome?: string;
   sys_total_preco_custo?: number;
   sys_markup_atual?: number;
@@ -31,7 +30,6 @@ interface ProdutoTableProps {
 
 type SortField =
   | "codigo"
-  | "gtin"
   | "nome"
   | "sys_total_preco_custo"
   | "sys_markup_atual"
@@ -57,8 +55,6 @@ export default function ProdutoTable({ produtos }: ProdutoTableProps) {
     switch (field) {
       case "codigo":
         return produto.codigo || "";
-      case "gtin":
-        return produto.gtin || "";
       case "nome":
         return produto.nome || "";
       case "sys_total_preco_custo":
@@ -117,13 +113,6 @@ export default function ProdutoTable({ produtos }: ProdutoTableProps) {
             {getSortIcon("codigo")}
           </TableHead>
           <TableHead
-            onClick={() => toggleSort("gtin")}
-            className="cursor-pointer hover:bg-muted/50"
-          >
-            GTIN
-            {getSortIcon("gtin")}
-          </TableHead>
-          <TableHead
             onClick={() => toggleSort("nome")}
             className="cursor-pointer hover:bg-muted/50"
           >
@@ -180,7 +169,6 @@ export default function ProdutoTable({ produtos }: ProdutoTableProps) {
             <TableCell className="font-medium">
               {produto.codigo || "-"}
             </TableCell>
-            <TableCell>{produto.gtin || "-"}</TableCell>
             <TableCell>{produto.nome || "-"}</TableCell>
             <TableCell>
               {produto.sys_total_preco_custo

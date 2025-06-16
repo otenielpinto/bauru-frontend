@@ -8,7 +8,6 @@ import { getUser } from "@/hooks/useUser";
  */
 interface ProdutoSearchFilters {
   codigo?: string;
-  gtin?: string;
   nome?: string;
   categoria1?: string;
   categoria2?: string;
@@ -61,10 +60,6 @@ export async function searchProdutos(
       query.codigo = filters.codigo;
     }
 
-    if (filters.gtin) {
-      query.gtin = filters.gtin;
-    }
-
     if (filters.nome) {
       query.nome = { $regex: filters.nome, $options: "i" };
     }
@@ -87,8 +82,6 @@ export async function searchProdutos(
         : 0;
     }
 
-    console.log(query);
-
     const produtos = await clientdb
       .collection("tmp_produto_tiny")
       .find(query)
@@ -102,8 +95,6 @@ export async function searchProdutos(
       ...produto,
       _id: produto._id.toString(),
     }));
-
-    console.log("Produtos encontrados:", serializedProdutos);
 
     return {
       success: true,
@@ -178,72 +169,6 @@ export async function getProdutoByCodigo(
     };
   } catch (error) {
     console.error("Error getting product by codigo:", error);
-    return {
-      success: false,
-      message: "Erro interno do servidor",
-      error: error instanceof Error ? error.message : "Erro desconhecido",
-    };
-  }
-}
-
-/**
- * Get product by GTIN
- * @param gtin Product GTIN
- * @returns Response with product object
- */
-export async function getProdutoByGtin(
-  gtin: string
-): Promise<ProdutoSearchResponse> {
-  try {
-    const user = await getUser();
-    if (!user?.id_tenant) {
-      return {
-        success: false,
-        message: "Usuário não autenticado ou sem tenant associado",
-        error: "UNAUTHORIZED",
-      };
-    }
-
-    const { client, clientdb } = await TMongo.connectToDatabase();
-
-    // Build query with tenant and company filters
-    const query: any = {
-      gtin: gtin,
-      id_tenant: Number(user.id_tenant),
-    };
-
-    // Add company filter if user has specific company access
-    if (user.id_empresa) {
-      query.id_empresa = Number(user.id_empresa);
-    }
-
-    const produto = await clientdb
-      .collection("tmp_produto_tiny")
-      .findOne(query);
-
-    await TMongo.mongoDisconnect(client);
-
-    if (!produto) {
-      return {
-        success: false,
-        message: "Produto não encontrado",
-        data: null,
-      };
-    }
-
-    // Serialize MongoDB document for Client Components
-    const serializedProduto = {
-      ...produto,
-      _id: produto._id.toString(),
-    };
-
-    return {
-      success: true,
-      message: "Produto encontrado",
-      data: [serializedProduto],
-    };
-  } catch (error) {
-    console.error("Error getting product by GTIN:", error);
     return {
       success: false,
       message: "Erro interno do servidor",

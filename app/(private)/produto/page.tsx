@@ -46,13 +46,7 @@ import {
  */
 interface ProdutoSearchForm {
   codigo: string;
-  gtin: string;
   nome: string;
-  sys_total_preco_custo: string;
-  preco_custo: string;
-  sys_markup_atual: string;
-  sys_margem_atual: string;
-  preco: string;
   sys_has_estrutura_produto: string;
 }
 
@@ -62,13 +56,7 @@ export default function ProdutoPage() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(true);
   const [searchForm, setSearchForm] = useState<ProdutoSearchForm>({
     codigo: "",
-    gtin: "",
     nome: "",
-    sys_total_preco_custo: "",
-    preco_custo: "",
-    sys_markup_atual: "",
-    sys_margem_atual: "",
-    preco: "",
     sys_has_estrutura_produto: "",
   });
   const [hasSearched, setHasSearched] = useState(false);
@@ -76,7 +64,7 @@ export default function ProdutoPage() {
   const [submittedSearchParams, setSubmittedSearchParams] =
     useState<ProdutoSearchForm | null>(null);
 
-  const itemsPerPage = 25;
+  const itemsPerPage = 100;
 
   // Invalidate cache when component mounts to ensure fresh data
   useEffect(() => {
@@ -100,27 +88,8 @@ export default function ProdutoPage() {
       if (submittedSearchParams?.codigo) {
         filters.codigo = submittedSearchParams.codigo;
       }
-      if (submittedSearchParams?.gtin) {
-        filters.gtin = submittedSearchParams.gtin;
-      }
       if (submittedSearchParams?.nome) {
         filters.nome = submittedSearchParams.nome;
-      }
-      if (submittedSearchParams?.sys_total_preco_custo) {
-        filters.sys_total_preco_custo =
-          submittedSearchParams.sys_total_preco_custo;
-      }
-      if (submittedSearchParams?.preco_custo) {
-        filters.preco_custo = submittedSearchParams.preco_custo;
-      }
-      if (submittedSearchParams?.sys_markup_atual) {
-        filters.sys_markup_atual = submittedSearchParams.sys_markup_atual;
-      }
-      if (submittedSearchParams?.sys_margem_atual) {
-        filters.sys_margem_atual = submittedSearchParams.sys_margem_atual;
-      }
-      if (submittedSearchParams?.preco) {
-        filters.preco = submittedSearchParams.preco;
       }
       if (submittedSearchParams?.sys_has_estrutura_produto) {
         filters.sys_has_estrutura_produto =
@@ -160,13 +129,7 @@ export default function ProdutoPage() {
     startTransition(() => {
       setSearchForm({
         codigo: "",
-        gtin: "",
         nome: "",
-        sys_total_preco_custo: "",
-        preco_custo: "",
-        sys_markup_atual: "",
-        sys_margem_atual: "",
-        preco: "",
         sys_has_estrutura_produto: "",
       });
       setHasSearched(false);
@@ -253,7 +216,7 @@ export default function ProdutoPage() {
             <CardContent>
               <form onSubmit={handleSearch} className="space-y-6">
                 {/* Basic Filters */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="nome">Nome</Label>
                     <Input
@@ -278,91 +241,10 @@ export default function ProdutoPage() {
                       autoComplete="off"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="gtin">GTIN</Label>
-                    <Input
-                      id="gtin"
-                      placeholder="Código de barras (GTIN)"
-                      value={searchForm.gtin}
-                      onChange={(e) =>
-                        handleInputChange("gtin", e.target.value)
-                      }
-                      autoComplete="off"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="sys_total_preco_custo">
-                      Custo Composição
-                    </Label>
-                    <Input
-                      id="sys_total_preco_custo"
-                      placeholder="Custo Composição"
-                      value={searchForm.sys_total_preco_custo}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "sys_total_preco_custo",
-                          e.target.value
-                        )
-                      }
-                      autoComplete="off"
-                    />
-                  </div>
                 </div>
 
                 {/* Additional Filters */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div>
-                    <Label htmlFor="preco_custo">Preço Custo</Label>
-                    <Input
-                      id="preco_custo"
-                      placeholder="Preço Custo"
-                      value={searchForm.preco_custo}
-                      onChange={(e) =>
-                        handleInputChange("preco_custo", e.target.value)
-                      }
-                      autoComplete="off"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="sys_markup_atual">Markup Atual</Label>
-                    <Input
-                      id="sys_markup_atual"
-                      placeholder="Markup Atual"
-                      value={searchForm.sys_markup_atual}
-                      onChange={(e) =>
-                        handleInputChange("sys_markup_atual", e.target.value)
-                      }
-                      autoComplete="off"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="sys_margem_atual">Margem Atual</Label>
-                    <Input
-                      id="sys_margem_atual"
-                      placeholder="Margem Atual"
-                      value={searchForm.sys_margem_atual}
-                      onChange={(e) =>
-                        handleInputChange("sys_margem_atual", e.target.value)
-                      }
-                      autoComplete="off"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="preco">Preço</Label>
-                    <Input
-                      id="preco"
-                      placeholder="Preço"
-                      value={searchForm.preco}
-                      onChange={(e) =>
-                        handleInputChange("preco", e.target.value)
-                      }
-                      autoComplete="off"
-                    />
-                  </div>
-                </div>
-
-                {/* Additional Filters */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                   <div>
                     <Label htmlFor="sys_has_estrutura_produto">
                       Possui Estrutura

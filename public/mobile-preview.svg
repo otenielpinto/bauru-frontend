@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="none"/>
+  <g>
+    <!-- Phone outline -->
+    <rect x="300" y="50" width="200" height="400" rx="20" fill="#f3f4f6" stroke="#9ca3af" stroke-width="10"/>
+    <rect x="310" y="70" width="180" height="340" rx="5" fill="#ffffff"/>
+    
+    <!-- Home button -->
+    <circle cx="400" cy="430" r="15" fill="#e5e7eb" stroke="#9ca3af" stroke-width="2"/>
+    
+    <!-- App header -->
+    <rect x="310" y="70" width="180" height="50" rx="5" fill="#2563eb"/>
+    <text x="340" y="100" font-family="Arial" font-size="14" fill="white">MDF-e SaaS</text>
+    <circle cx="470" cy="95" r="10" fill="white" opacity="0.5"/>
+    
+    <!-- Navigation tabs -->
+    <rect x="310" y="120" width="180" height="30" fill="#f9fafb"/>
+    <rect x="320" y="125" width="50" height="20" rx="10" fill="#2563eb"/>
+    <text x="330" y="140" font-family="Arial" font-size="10" fill="white">Docs</text>
+    <text x="380" y="140" font-family="Arial" font-size="10" fill="#6b7280">Veículos</text>
+    <text x="440" y="140" font-family="Arial" font-size="10" fill="#6b7280">Perfil</text>
+    
+    <!-- Document list -->
+    <rect x="320" y="160" width="160" height="50" rx="5" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1"/>
+    <text x="330" y="180" font-family="Arial" font-size="10" fill="#111827">MDF-e #123456789</text>
+    <text x="330" y="195" font-family="Arial" font-size="8" fill="#6b7280">SP → RJ • 12/08/2023</text>
+    <rect x="450" y="175" width="20" height="20" rx="10" fill="#10b981"/>
+    
+    <rect x="320" y="220" width="160" height="50" rx="5" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1"/>
+    <text x="330" y="240" font-family="Arial" font-size="10" fill="#111827">MDF-e #987654321</text>
+    <text x="330" y="255" font-family="Arial" font-size="8" fill="#6b7280">MG → ES • 10/08/2023</text>
+    <rect x="450" y="235" width="20" height="20" rx="10" fill="#10b981"/>
+    
+    <rect x="320" y="280" width="160" height="50" rx="5" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1"/>
+    <text x="330" y="300" font-family="Arial" font-size="10" fill="#111827">MDF-e #456789123</text>
+    <text x="330" y="315" font-family="Arial" font-size="8" fill="#6b7280">PR → SC • 08/08/2023</text>
+    <rect x="450" y="295" width="20" height="20" rx="10" fill="#f59e0b"/>
+    
+    <!-- Floating action button -->
+    <circle cx="440" cy="370" r="20" fill="#2563eb"/>
+    <text x="435" y="375" font-family="Arial" font-size="20" fill="white">+</text>
+    
+    <!-- Hand holding phone -->
+    <path d="M250,450 C250,450 270,500 350,520 C430,540 480,450 480,450 L500,400 C500,400 550,420 570,400 C590,380 560,350 560,350 L520,370 L500,350 L450,450 C450,450 420,490 380,480 C340,470 320,430 320,430 L250,450 Z" fill="#f3f4f6" stroke="#9ca3af" stroke-width="2"/>
+  </g>
+</svg>

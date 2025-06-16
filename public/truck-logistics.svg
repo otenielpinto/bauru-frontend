@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="none"/>
+  <g>
+    <path d="M600,350 L700,350 L700,250 L650,200 L600,200 Z" fill="#4a7aff" opacity="0.8"/>
+    <rect x="450" y="300" width="150" height="100" fill="#4a7aff" opacity="0.8"/>
+    <rect x="100" y="300" width="350" height="100" fill="#2563eb"/>
+    <circle cx="200" cy="400" r="40" fill="#1e3a8a" stroke="#fff" stroke-width="5"/>
+    <circle cx="550" cy="400" r="40" fill="#1e3a8a" stroke="#fff" stroke-width="5"/>
+    <circle cx="650" cy="400" r="40" fill="#1e3a8a" stroke="#fff" stroke-width="5"/>
+    
+    <!-- Windows -->
+    <rect x="500" y="320" width="60" height="40" rx="5" fill="#bfdbfe"/>
+    
+    <!-- Document icon -->
+    <rect x="250" y="220" width="80" height="100" rx="5" fill="white" stroke="#2563eb" stroke-width="3"/>
+    <line x1="270" y1="250" x2="310" y2="250" stroke="#2563eb" stroke-width="3"/>
+    <line x1="270" y1="270" x2="310" y2="270" stroke="#2563eb" stroke-width="3"/>
+    <line x1="270" y1="290" x2="310" y2="290" stroke="#2563eb" stroke-width="3"/>
+    
+    <!-- Road -->
+    <rect x="50" y="440" width="700" height="20" fill="#374151"/>
+    <line x1="100" y1="450" x2="150" y2="450" stroke="white" stroke-width="5" stroke-dasharray="20,20"/>
+    <line x1="200" y1="450" x2="250" y2="450" stroke="white" stroke-width="5" stroke-dasharray="20,20"/>
+    <line x1="300" y1="450" x2="350" y2="450" stroke="white" stroke-width="5" stroke-dasharray="20,20"/>
+    <line x1="400" y1="450" x2="450" y2="450" stroke="white" stroke-width="5" stroke-dasharray="20,20"/>
+    <line x1="500" y1="450" x2="550" y2="450" stroke="white" stroke-width="5" stroke-dasharray="20,20"/>
+    <line x1="600" y1="450" x2="650" y2="450" stroke="white" stroke-width="5" stroke-dasharray="20,20"/>
+  </g>
+</svg>

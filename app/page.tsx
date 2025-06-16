@@ -19,9 +19,6 @@ export default function LogoutPage() {
      */
     const handleLogout = async () => {
       try {
-        // Aguarda 2 segundos antes de finalizar a sessão
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-
         // Finaliza a sessão do usuário via API route
         await fetch("/api/logout", {
           method: "GET",

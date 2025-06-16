@@ -4,9 +4,9 @@ import { Toaster } from "@/components/ui/toaster";
 import ReactQueryProvider from "@/providers/react-query";
 
 export const metadata: Metadata = {
-  title: "freteDOC",
+  title: "Gestor de Custos",
   description:
-    "Sistema de Manifesto Eletrônico de Documentos Fiscais (MDFe) - Gerenciamento completo de documentos fiscais eletrônicos.",
+    "Sistema de Gestão de Custos de Produtos - Controle completo de custos, precificação e análise de rentabilidade de produtos.",
 };
 
 export default function RootLayout({

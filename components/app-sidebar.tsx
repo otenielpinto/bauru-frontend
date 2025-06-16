@@ -62,17 +62,8 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "MDF-e",
-          url: "/mdfe",
-        },
-        {
-          title: "Status Sefaz",
-          url: "/mdfe/status",
-        },
-
-        {
-          title: "Nao encerrados",
-          url: "/mdfe/nao-encerrados",
+          title: "Produto",
+          url: "/produto",
         },
       ],
     },
@@ -82,26 +73,6 @@ const data = {
       url: "#",
       icon: Settings2,
       items: [
-        {
-          title: "Emitente",
-          url: "/mdfe/emitentes",
-        },
-
-        {
-          title: "Certificado",
-          url: "/mdfe/certificados",
-        },
-
-        {
-          title: "Upload de certificado",
-          url: "/mdfe/certificados/new",
-        },
-
-        {
-          title: "Motoristas",
-          url: "/mdfe/motoristas",
-        },
-
         {
           title: "Configuracao",
           url: "/mdfe/config",

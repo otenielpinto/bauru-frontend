@@ -3,6 +3,8 @@
 import { useState, useEffect, startTransition } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { searchProdutos } from "@/actions/actProduto";
+import { getAllCategorias } from "@/actions/actCategoria";
+import { getAllGrades } from "@/actions/actGrade";
 import ProdutoTable from "@/components/produto/ProdutoTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -48,6 +50,10 @@ interface ProdutoSearchForm {
   codigo: string;
   nome: string;
   sys_has_estrutura_produto: string;
+  categoria_principal: string;
+  categoria_secundaria: string;
+  categoria_terciaria: string;
+  grade: string;
 }
 
 export default function ProdutoPage() {
@@ -58,6 +64,10 @@ export default function ProdutoPage() {
     codigo: "",
     nome: "",
     sys_has_estrutura_produto: "",
+    categoria_principal: "",
+    categoria_secundaria: "",
+    categoria_terciaria: "",
+    grade: "",
   });
   const [hasSearched, setHasSearched] = useState(false);
   // Estado separado para armazenar os parâmetros de pesquisa submetidos
@@ -71,6 +81,34 @@ export default function ProdutoPage() {
     // Invalidate all product queries to force refetch when returning to this page
     queryClient.invalidateQueries({ queryKey: ["produtos"] });
   }, [queryClient]);
+
+  // React Query for categories
+  const { data: categoriasPrincipais } = useQuery({
+    queryKey: ["categorias", "nivel-0"],
+    queryFn: () => getAllCategorias({ nivel: 0 }),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const { data: categoriasSecundarias } = useQuery({
+    queryKey: ["categorias", "nivel-1", searchForm.categoria_principal],
+    queryFn: () => getAllCategorias({ nivel: 1 }),
+    enabled: !!searchForm.categoria_principal,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: categoriasTerciarias } = useQuery({
+    queryKey: ["categorias", "nivel-2", searchForm.categoria_secundaria],
+    queryFn: () => getAllCategorias({ nivel: 2 }),
+    enabled: !!searchForm.categoria_secundaria,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // React Query for grades
+  const { data: grades } = useQuery({
+    queryKey: ["grades"],
+    queryFn: () => getAllGrades(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
   // React Query for product search
   const {
@@ -94,6 +132,18 @@ export default function ProdutoPage() {
       if (submittedSearchParams?.sys_has_estrutura_produto) {
         filters.sys_has_estrutura_produto =
           submittedSearchParams.sys_has_estrutura_produto === "true";
+      }
+      if (submittedSearchParams?.categoria_principal) {
+        filters.categoria1 = submittedSearchParams.categoria_principal;
+      }
+      if (submittedSearchParams?.categoria_secundaria) {
+        filters.categoria2 = submittedSearchParams.categoria_secundaria;
+      }
+      if (submittedSearchParams?.categoria_terciaria) {
+        filters.categoria3 = submittedSearchParams.categoria_terciaria;
+      }
+      if (submittedSearchParams?.grade) {
+        filters.grade = submittedSearchParams.grade;
       }
 
       return searchProdutos(filters);
@@ -131,6 +181,10 @@ export default function ProdutoPage() {
         codigo: "",
         nome: "",
         sys_has_estrutura_produto: "",
+        categoria_principal: "",
+        categoria_secundaria: "",
+        categoria_terciaria: "",
+        grade: "",
       });
       setHasSearched(false);
       setSubmittedSearchParams(null); // Limpar os parâmetros submetidos
@@ -244,7 +298,7 @@ export default function ProdutoPage() {
                 </div>
 
                 {/* Additional Filters */}
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="sys_has_estrutura_produto">
                       Possui Estrutura
@@ -261,6 +315,119 @@ export default function ProdutoPage() {
                       <SelectContent>
                         <SelectItem value="true">Sim</SelectItem>
                         <SelectItem value="false">Não</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="grade">Grade</Label>
+                    <Select
+                      value={searchForm.grade}
+                      onValueChange={(value) =>
+                        handleInputChange("grade", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma grade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {grades?.success &&
+                          grades.data?.map((grade: any) => (
+                            <SelectItem key={grade.nome} value={grade.nome}>
+                              {grade.nome}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Category Filters */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="categoria_principal">
+                      Categoria Principal
+                    </Label>
+                    <Select
+                      value={searchForm.categoria_principal}
+                      onValueChange={(value) => {
+                        handleInputChange("categoria_principal", value);
+                        // Reset dependent categories when parent changes
+                        if (value !== searchForm.categoria_principal) {
+                          handleInputChange("categoria_secundaria", "");
+                          handleInputChange("categoria_terciaria", "");
+                        }
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categoriasPrincipais?.map((categoria: any) => (
+                          <SelectItem
+                            key={categoria.nome}
+                            value={categoria.nome}
+                          >
+                            {categoria.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="categoria_secundaria">
+                      Categoria Secundária
+                    </Label>
+                    <Select
+                      value={searchForm.categoria_secundaria}
+                      onValueChange={(value) => {
+                        handleInputChange("categoria_secundaria", value);
+                        // Reset dependent category when parent changes
+                        if (value !== searchForm.categoria_secundaria) {
+                          handleInputChange("categoria_terciaria", "");
+                        }
+                      }}
+                      disabled={!searchForm.categoria_principal}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categoriasSecundarias?.map((categoria: any) => (
+                          <SelectItem
+                            key={categoria.nome}
+                            value={categoria.nome}
+                          >
+                            {categoria.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="categoria_terciaria">
+                      Categoria Terciária
+                    </Label>
+                    <Select
+                      value={searchForm.categoria_terciaria}
+                      onValueChange={(value) =>
+                        handleInputChange("categoria_terciaria", value)
+                      }
+                      disabled={!searchForm.categoria_secundaria}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categoriasTerciarias?.map((categoria: any) => (
+                          <SelectItem
+                            key={categoria.nome}
+                            value={categoria.nome}
+                          >
+                            {categoria.nome}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>

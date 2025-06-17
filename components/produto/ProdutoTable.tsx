@@ -10,10 +10,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp, Edit } from "lucide-react";
 
 interface Produto {
   _id: string;
+  id?: string;
   codigo?: string;
   nome?: string;
   sys_total_preco_custo?: number;
@@ -154,6 +156,7 @@ export default function ProdutoTable({ produtos }: ProdutoTableProps) {
             Preço Venda
             {getSortIcon("preco")}
           </TableHead>
+          <TableHead>Ações</TableHead>
           <TableHead
             onClick={() => toggleSort("sys_has_estrutura_produto")}
             className="cursor-pointer hover:bg-muted/50"
@@ -203,6 +206,21 @@ export default function ProdutoTable({ produtos }: ProdutoTableProps) {
                     currency: "BRL",
                   })
                 : "-"}
+            </TableCell>
+            <TableCell>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  window.open(
+                    `https://erp.tiny.com.br/produtos#edit/${produto.id}`,
+                    "_blank"
+                  );
+                }}
+              >
+                <Edit className="h-4 w-4 mr-1" />
+                Editar
+              </Button>
             </TableCell>
             <TableCell>
               {produto.sys_has_estrutura_produto ? (

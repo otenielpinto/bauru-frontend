@@ -12,6 +12,7 @@ interface ProdutoSearchFilters {
   categoria1?: string;
   categoria2?: string;
   categoria3?: string;
+  grade?: string;
   sys_has_estrutura_produto?: boolean;
 }
 
@@ -76,11 +77,16 @@ export async function searchProdutos(
       query.categoria3 = filters.categoria3;
     }
 
+    if (filters.grade) {
+      query.grade = filters.grade;
+    }
+
     if (filters.sys_has_estrutura_produto !== undefined) {
       query.sys_has_estrutura_produto = filters.sys_has_estrutura_produto
         ? 1
         : 0;
     }
+    // console.log("Query:", query);
 
     const produtos = await clientdb
       .collection("tmp_produto_tiny")

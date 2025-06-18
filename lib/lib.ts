@@ -30,7 +30,12 @@ const formatDateForInput = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
+const round = function (value: number): number {
+  return Math.round(value * 100) / 100;
+};
+
 export const lib = {
+  round,
   setUTCHoursStart,
   setUTCHoursEnd,
   dateToBr,

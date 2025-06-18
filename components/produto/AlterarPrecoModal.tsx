@@ -108,7 +108,7 @@ export default function AlterarPrecoModal({
     setIsLoading(true);
 
     try {
-      await onSave(produto.id || produto._id, precoFinal);
+      await onSave(produto?.id || "", precoFinal);
       toast({
         title: "Sucesso",
         description: "Preço alterado com sucesso!",
@@ -132,7 +132,7 @@ export default function AlterarPrecoModal({
     onClose();
   };
 
-  const precoCusto = produto.preco_custo || produto.sys_total_preco_custo || 0;
+  const precoCusto = produto.sys_total_preco_custo || produto.preco_custo || 0;
   const precoAtual = produto.preco || 0;
   const markupAtual = produto.sys_markup_atual || 0;
 
@@ -181,9 +181,7 @@ export default function AlterarPrecoModal({
                 Markup Atual
               </Label>
               <p className="text-sm font-medium">
-                {markupAtual > 0
-                  ? `${markupAtual.toFixed(2)}%`
-                  : "Não definido"}
+                {markupAtual > 0 ? `${markupAtual.toFixed(2)}` : "Não definido"}
               </p>
             </div>
           </div>
@@ -217,7 +215,7 @@ export default function AlterarPrecoModal({
           {/* Campos de entrada */}
           {tipoAlteracao === "markup" ? (
             <div className="space-y-3">
-              <Label htmlFor="novo-markup">Novo Markup (%)</Label>
+              <Label htmlFor="novo-markup">Novo Markup</Label>
               <Input
                 id="novo-markup"
                 type="number"
@@ -259,7 +257,7 @@ export default function AlterarPrecoModal({
                     Markup Resultante:
                   </Label>
                   <p className="text-lg font-bold text-green-900">
-                    {markupCalculado.toFixed(2)}%
+                    {markupCalculado.toFixed(2)}
                   </p>
                 </div>
               )}

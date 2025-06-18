@@ -2,7 +2,7 @@
 
 import { TMongo } from "@/infra/mongoClient";
 import { getUser } from "@/hooks/useUser";
-import { de } from "date-fns/locale";
+import { lib } from "@/lib/lib";
 
 /**
  * Interface para o item de log de preço
@@ -47,31 +47,88 @@ export async function saveProdutoPrecoLog(
         error: "NO_ITEMS",
       };
     }
-
     const { client, clientdb } = await TMongo.connectToDatabase();
 
     // Preparar os dados para inserção
     const currentDate = new Date();
-    const logItems = items.map((item) => ({
-      id: item.id,
-      preco: item.preco,
-      codigo: null,
-      descricao: null,
-      usuario_alteracao: user.codigo || user.email || "unknown",
-      nome_usuario: user.name || user.email || "unknown",
-      id_tenant: Number(user.id_tenant),
-      id_empresa: user.id_empresa ? Number(user.id_empresa) : undefined,
-      createdAt: currentDate,
-      updatedAt: currentDate,
-    }));
+    const rows = [];
+    for (const item of items) {
+      if (!item.id || !item.preco) {
+        continue; // Pular itens inválidos
+      }
+      // Buscar o produto para obter sys_total_preco_custo e outras informações
+      const produto = await clientdb.collection("tmp_produto_tiny").findOne(
+        {
+          id: String(item.id),
+          id_tenant: user.id_tenant,
+        },
+        {
+          projection: {
+            codigo: 1,
+            nome: 1,
+            unidade: 1,
+            preco: 1,
+            preco_custo: 1,
+            preco_custo_medio: 1,
+            preco_promocional: 1,
+            sys_total_preco_custo: 1,
+            sys_margem_atual: 1,
+            sys_markup_atual: 1,
+          },
+        }
+      );
+
+      let precoVenda = Number(item?.preco);
+      let sys_markup_atual = 0;
+      let sys_margem_atual = 0;
+
+      sys_markup_atual = lib.round(precoVenda / produto?.sys_total_preco_custo);
+      sys_margem_atual = lib.round(precoVenda - produto?.sys_total_preco_custo);
+
+      rows.push({
+        id: String(item.id),
+        codigo: produto?.codigo || null,
+        nome: produto?.nome || null,
+        unidade: produto?.unidade || null,
+        preco_custo: produto?.preco_custo || 0,
+        preco_custo_medio: produto?.preco_custo_medio || 0,
+        preco_promocional: produto?.preco_promocional || 0,
+        sys_total_preco_custo: produto?.sys_total_preco_custo || 0,
+        sys_margem_atual: produto?.sys_margem_atual,
+        sys_markup_atual: produto?.sys_markup_atual,
+        preco: Number(produto?.preco),
+        novo_preco: Number(item.preco),
+        novo_sys_markup_atual: sys_markup_atual,
+        novo_sys_margem_atual: sys_margem_atual,
+        usuario_alteracao: user.codigo || user.email || "unknown",
+        nome_usuario: user.name || user.email || "unknown",
+        id_tenant: Number(user.id_tenant),
+        id_empresa: user.id_empresa ? Number(user.id_empresa) : undefined,
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      });
+    }
 
     // Inserir todos os itens de uma vez
     const result = await clientdb
       .collection("tmp_produto_log_preco")
-      .insertMany(logItems);
+      .insertMany(rows);
+
+    for (const row of rows) {
+      await clientdb.collection("tmp_produto_tiny").updateOne(
+        { id: String(row.id), id_tenant: row.id_tenant },
+        {
+          $set: {
+            preco: row.novo_preco,
+            sys_markup_atual: row.novo_sys_markup_atual,
+            sys_margem_atual: row.novo_sys_margem_atual,
+            updatedAt: currentDate,
+          },
+        }
+      );
+    }
 
     await TMongo.mongoDisconnect(client);
-
     return {
       success: true,
       message: `${result.insertedCount} log(s) de preço salvos com sucesso`,

@@ -9,12 +9,14 @@ import ProdutoTable from "@/components/produto/ProdutoTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Search,
   RotateCcw,
   ChevronDown,
   ChevronUp,
   Filter,
+  X,
 } from "lucide-react";
 import {
   Select,
@@ -42,6 +44,19 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
 
 /**
  * Product search form interface
@@ -53,21 +68,22 @@ interface ProdutoSearchForm {
   categoria_principal: string;
   categoria_secundaria: string;
   categoria_terciaria: string;
-  grade: string;
+  grade: string[];
 }
 
 export default function ProdutoPage() {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [isSearchExpanded, setIsSearchExpanded] = useState(true);
+  const [gradePopoverOpen, setGradePopoverOpen] = useState(false);
   const [searchForm, setSearchForm] = useState<ProdutoSearchForm>({
     codigo: "",
     nome: "",
-    sys_has_estrutura_produto: "",
+    sys_has_estrutura_produto: "true",
     categoria_principal: "",
     categoria_secundaria: "",
     categoria_terciaria: "",
-    grade: "",
+    grade: [],
   });
   const [hasSearched, setHasSearched] = useState(false);
   // Estado separado para armazenar os parâmetros de pesquisa submetidos
@@ -164,6 +180,26 @@ export default function ProdutoPage() {
     });
   };
 
+  const handleGradeToggle = (gradeName: string) => {
+    startTransition(() => {
+      setSearchForm((prev) => ({
+        ...prev,
+        grade: prev.grade.includes(gradeName)
+          ? prev.grade.filter((g) => g !== gradeName)
+          : [...prev.grade, gradeName],
+      }));
+    });
+  };
+
+  const handleGradeClear = () => {
+    startTransition(() => {
+      setSearchForm((prev) => ({
+        ...prev,
+        grade: [],
+      }));
+    });
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -180,11 +216,11 @@ export default function ProdutoPage() {
       setSearchForm({
         codigo: "",
         nome: "",
-        sys_has_estrutura_produto: "",
+        sys_has_estrutura_produto: "true",
         categoria_principal: "",
         categoria_secundaria: "",
         categoria_terciaria: "",
-        grade: "",
+        grade: [],
       });
       setHasSearched(false);
       setSubmittedSearchParams(null); // Limpar os parâmetros submetidos
@@ -311,44 +347,46 @@ export default function ProdutoPage() {
                 {/* Additional Filters */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="sys_has_estrutura_produto">
-                      Possui Estrutura
-                    </Label>
-                    <Select
-                      value={searchForm.sys_has_estrutura_produto}
-                      onValueChange={(value) =>
-                        handleInputChange("sys_has_estrutura_produto", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="true">Sim</SelectItem>
-                        <SelectItem value="false">Não</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
                     <Label htmlFor="grade">Grade</Label>
-                    <Select
-                      value={searchForm.grade}
-                      onValueChange={(value) =>
-                        handleInputChange("grade", value)
-                      }
+                    <Popover
+                      open={gradePopoverOpen}
+                      onOpenChange={setGradePopoverOpen}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione uma grade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {grades?.success &&
-                          grades.data?.map((grade: any) => (
-                            <SelectItem key={grade.nome} value={grade.nome}>
-                              {grade.nome}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left"
+                          disabled={!grades?.success}
+                        >
+                          {searchForm.grade.length > 0
+                            ? searchForm.grade.join(", ")
+                            : "Selecione uma ou mais grades"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-72 p-4">
+                        <Command>
+                          <CommandInput placeholder="Buscar grade..." />
+                          <CommandEmpty>Nenhuma grade encontrada.</CommandEmpty>
+                          <CommandGroup>
+                            {grades?.success &&
+                              grades.data?.map((grade: any) => (
+                                <CommandItem key={grade.nome}>
+                                  <Checkbox
+                                    checked={searchForm.grade.includes(
+                                      grade.nome
+                                    )}
+                                    onCheckedChange={() =>
+                                      handleGradeToggle(grade.nome)
+                                    }
+                                    className="mr-2"
+                                  />
+                                  {grade.nome}
+                                </CommandItem>
+                              ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
 
@@ -441,6 +479,25 @@ export default function ProdutoPage() {
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+                </div>
+
+                {/* Possui Estrutura - Último campo */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="sys_has_estrutura_produto">
+                      Possui Estrutura
+                    </Label>
+                    <Checkbox
+                      id="sys_has_estrutura_produto"
+                      checked={searchForm.sys_has_estrutura_produto === "true"}
+                      onCheckedChange={(checked) =>
+                        handleInputChange(
+                          "sys_has_estrutura_produto",
+                          checked ? "true" : "false"
+                        )
+                      }
+                    />
                   </div>
                 </div>
 

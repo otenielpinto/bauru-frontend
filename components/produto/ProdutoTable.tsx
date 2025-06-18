@@ -181,15 +181,22 @@ export default function ProdutoTable({
               onClick={() => toggleSort("codigo")}
               className="cursor-pointer hover:bg-muted/50"
             >
-              Código
+              SKU
               {getSortIcon("codigo")}
             </TableHead>
             <TableHead
               onClick={() => toggleSort("nome")}
               className="cursor-pointer hover:bg-muted/50"
             >
-              Nome
+              Descrição
               {getSortIcon("nome")}
+            </TableHead>
+            <TableHead
+              onClick={() => toggleSort("preco_custo")}
+              className="cursor-pointer hover:bg-muted/50"
+            >
+              Preço Custo
+              {getSortIcon("preco_custo")}
             </TableHead>
             <TableHead
               onClick={() => toggleSort("sys_total_preco_custo")}
@@ -213,13 +220,6 @@ export default function ProdutoTable({
               {getSortIcon("sys_margem_atual")}
             </TableHead>
             <TableHead
-              onClick={() => toggleSort("preco_custo")}
-              className="cursor-pointer hover:bg-muted/50"
-            >
-              Preço Custo
-              {getSortIcon("preco_custo")}
-            </TableHead>
-            <TableHead
               onClick={() => toggleSort("preco")}
               className="cursor-pointer hover:bg-muted/50"
             >
@@ -227,13 +227,6 @@ export default function ProdutoTable({
               {getSortIcon("preco")}
             </TableHead>
             <TableHead>Ações</TableHead>
-            <TableHead
-              onClick={() => toggleSort("sys_has_estrutura_produto")}
-              className="cursor-pointer hover:bg-muted/50"
-            >
-              Estrutura
-              {getSortIcon("sys_has_estrutura_produto")}
-            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -243,6 +236,14 @@ export default function ProdutoTable({
                 {produto.codigo || "-"}
               </TableCell>
               <TableCell>{produto.nome || "-"}</TableCell>
+              <TableCell>
+                {produto.preco_custo
+                  ? produto.preco_custo.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })
+                  : "-"}
+              </TableCell>
               <TableCell>
                 {produto.sys_total_preco_custo
                   ? produto.sys_total_preco_custo.toLocaleString("pt-BR", {
@@ -259,14 +260,6 @@ export default function ProdutoTable({
               <TableCell>
                 {produto.sys_margem_atual
                   ? `R$ ${produto.sys_margem_atual.toFixed(2)}`
-                  : "-"}
-              </TableCell>
-              <TableCell>
-                {produto.preco_custo
-                  ? produto.preco_custo.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })
                   : "-"}
               </TableCell>
               <TableCell>
@@ -290,7 +283,6 @@ export default function ProdutoTable({
                     }}
                   >
                     <Edit className="h-4 w-4 mr-1" />
-                    Editar
                   </Button>
                   <Button
                     variant="outline"
@@ -299,16 +291,8 @@ export default function ProdutoTable({
                     className="text-green-600 border-green-200 hover:bg-green-50"
                   >
                     <DollarSign className="h-4 w-4 mr-1" />
-                    Preço
                   </Button>
                 </div>
-              </TableCell>
-              <TableCell>
-                {produto.sys_has_estrutura_produto ? (
-                  <Badge variant="secondary">Sim</Badge>
-                ) : (
-                  <Badge variant="outline">Não</Badge>
-                )}
               </TableCell>
             </TableRow>
           ))}

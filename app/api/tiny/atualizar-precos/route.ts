@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/actions/actSession";
+import { saveProdutoPrecoLog } from "@/actions/actProdutoPreco";
 
 /**
  * Interface para os dados de entrada
@@ -90,6 +91,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // 3. Validar estrutura dos dados
     const precos: PrecoUpdateRequest[] = body;
+    let logPrecos: any = [];
 
     for (const item of precos) {
       if (!item.id || !item.preco) {
@@ -101,6 +103,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           { status: 400 }
         );
       }
+
+      logPrecos.push({
+        id: item.id,
+        preco: parseFloat(item.preco).toFixed(2),
+      });
 
       // Validar se o preço é um número válido
       const precoNum = parseFloat(item.preco);
@@ -144,7 +151,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     try {
       const tinyResponse = await fetch(
-        `${tinyApiUrl}/produtos.atualizar.precos.php?token=${tinyToken}`,
+        `${tinyApiUrl}/produto.atualizar.precos.php?token=${tinyToken}`,
         {
           method: "POST",
           headers: {
@@ -155,7 +162,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           signal: controller.signal,
         }
       );
-
       clearTimeout(timeoutId);
 
       if (!tinyResponse.ok) {
@@ -196,6 +202,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           },
           { status: 502 }
         );
+      }
+
+      try {
+        if (retorno?.status == "OK") {
+          await saveProdutoPrecoLog(logPrecos);
+        }
+      } catch (error) {
+        console.error("Erro ao salvar log de preços:", error);
       }
 
       // Verificar se houve erro geral no processamento

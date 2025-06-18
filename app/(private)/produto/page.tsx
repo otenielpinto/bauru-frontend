@@ -17,6 +17,7 @@ import {
   ChevronUp,
   Filter,
   X,
+  FileDown,
 } from "lucide-react";
 import {
   Select,
@@ -57,6 +58,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
+import { reportToExcel } from "@/lib/reportToExcel";
 
 /**
  * Product search form interface
@@ -261,6 +263,71 @@ export default function ProdutoPage() {
 
     // Log para debug
     console.log(`Preço do produto ${produtoId} atualizado para ${novoPreco}`);
+  };
+
+  // Função para exportar produtos para Excel
+  const handleExportToExcel = () => {
+    if (!produtos || produtos.length === 0) {
+      alert("Não há dados para exportar.");
+      return;
+    }
+
+    // Definir as colunas que serão exportadas (baseadas na tabela)
+    const columns = [
+      { label: "SKU", value: "codigo" },
+      { label: "Descrição", value: "nome" },
+      { label: "Preço Custo", value: "preco_custo_formatted" },
+      { label: "Custo Composição", value: "sys_total_preco_custo_formatted" },
+      { label: "Markup Atual", value: "sys_markup_atual_formatted" },
+      { label: "Margem Atual", value: "sys_margem_atual_formatted" },
+      { label: "Preço Venda", value: "preco_formatted" },
+    ];
+
+    // Formatar os dados para exportação
+    const dataForExport = produtos.map((produto) => ({
+      codigo: produto.codigo || "-",
+      nome: produto.nome || "-",
+      preco_custo_formatted: produto.preco_custo
+        ? produto.preco_custo.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })
+        : "-",
+      sys_total_preco_custo_formatted: produto.sys_total_preco_custo
+        ? produto.sys_total_preco_custo.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })
+        : "-",
+      sys_markup_atual_formatted: produto.sys_markup_atual
+        ? `${produto.sys_markup_atual.toFixed(2)}`
+        : "-",
+      sys_margem_atual_formatted: produto.sys_margem_atual
+        ? `R$ ${produto.sys_margem_atual.toFixed(2)}`
+        : "-",
+      preco_formatted: produto.preco
+        ? produto.preco.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })
+        : "-",
+    }));
+
+    // Gerar nome do arquivo baseado na data/hora atual
+    const now = new Date();
+    const fileName = `produtos_${now.getFullYear()}-${String(
+      now.getMonth() + 1
+    ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(
+      now.getHours()
+    ).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}`;
+
+    // Chamar a função de exportação
+    reportToExcel({
+      data: dataForExport,
+      columns: columns,
+      sheetName: "Produtos",
+      fileName: fileName,
+    });
   };
 
   return (
@@ -584,11 +651,24 @@ export default function ProdutoPage() {
                 ? `${totalProdutos} produto(s) encontrado(s)`
                 : "Nenhum produto encontrado com os filtros aplicados"}
             </p>
-            {totalProdutos > 0 && (
-              <p className="text-sm text-muted-foreground">
-                Página {currentPage} de {totalPages}
-              </p>
-            )}
+            <div className="flex items-center gap-2">
+              {totalProdutos > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExportToExcel}
+                  className="flex items-center gap-2"
+                >
+                  <FileDown className="h-4 w-4" />
+                  Exportar Excel
+                </Button>
+              )}
+              {totalProdutos > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  Página {currentPage} de {totalPages}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Results Table */}

@@ -216,6 +216,17 @@ export default function ProdutoPage() {
   const endIndex = startIndex + itemsPerPage;
   const paginatedProdutos = produtos.slice(startIndex, endIndex);
 
+  // Função para atualizar dados após alteração de preço
+  const handlePrecoUpdated = (produtoId: string, novoPreco: number) => {
+    // Invalidar e refazer a query dos produtos para obter dados atualizados
+    queryClient.invalidateQueries({
+      queryKey: ["produtos", submittedSearchParams],
+    });
+
+    // Log para debug
+    console.log(`Preço do produto ${produtoId} atualizado para ${novoPreco}`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -526,7 +537,10 @@ export default function ProdutoPage() {
           {/* Results Table */}
           {totalProdutos > 0 ? (
             <div className="rounded-md border">
-              <ProdutoTable produtos={paginatedProdutos} />
+              <ProdutoTable
+                produtos={paginatedProdutos}
+                onPrecoUpdated={handlePrecoUpdated}
+              />
             </div>
           ) : (
             <Card>

@@ -123,6 +123,7 @@ export async function saveProdutoPrecoLog(
             sys_markup_atual: row.novo_sys_markup_atual,
             sys_margem_atual: row.novo_sys_margem_atual,
             updatedAt: currentDate,
+            updatePrice: currentDate,
           },
         }
       );

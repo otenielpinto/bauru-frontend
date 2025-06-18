@@ -81,7 +81,7 @@ export async function searchProdutos(
       query.grade = { $in: filters.grade };
     }
 
-    if (filters.sys_has_estrutura_produto !== undefined) {
+    if (filters.sys_has_estrutura_produto == true) {
       query.sys_has_estrutura_produto = filters.sys_has_estrutura_produto
         ? 1
         : 0;
@@ -182,5 +182,3 @@ export async function getProdutoByCodigo(
     };
   }
 }
-
-

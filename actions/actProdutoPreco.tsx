@@ -79,11 +79,17 @@ export async function saveProdutoPrecoLog(
       );
 
       let precoVenda = Number(item?.preco);
+      let totalCusto = produto?.sys_total_preco_custo || 0;
+      if (totalCusto <= 0) {
+        totalCusto = produto?.preco_custo || 0;
+      }
       let sys_markup_atual = 0;
       let sys_margem_atual = 0;
 
-      sys_markup_atual = lib.round(precoVenda / produto?.sys_total_preco_custo);
-      sys_margem_atual = lib.round(precoVenda - produto?.sys_total_preco_custo);
+      if (precoVenda > 0 && totalCusto > 0) {
+        sys_markup_atual = lib.round(precoVenda / totalCusto);
+        sys_margem_atual = lib.round(precoVenda - totalCusto);
+      }
 
       rows.push({
         id: String(item.id),

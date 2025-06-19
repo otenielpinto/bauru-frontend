@@ -39,6 +39,7 @@ interface Produto {
   preco_custo?: number;
   preco?: number;
   sys_has_estrutura_produto?: boolean;
+  updatePrice?: string | Date;
 }
 
 interface ProdutoTableProps {
@@ -344,12 +345,50 @@ export default function ProdutoTable({
                   : "-"}
               </TableCell>
               <TableCell>
-                {produto.preco
-                  ? produto.preco.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })
-                  : "-"}
+                {produto.updatePrice ? (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <span>
+                        {produto.preco
+                          ? produto.preco.toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            })
+                          : "-"}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        Última atualização:{" "}
+                        {produto.updatePrice instanceof Date
+                          ? produto.updatePrice.toLocaleString("pt-BR", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                          : new Date(produto.updatePrice).toLocaleString(
+                              "pt-BR",
+                              {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : produto.preco ? (
+                  produto.preco.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })
+                ) : (
+                  "-"
+                )}
               </TableCell>
               <TableCell>
                 <Input

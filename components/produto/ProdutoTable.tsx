@@ -11,8 +11,15 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, Edit, DollarSign } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Edit,
+  DollarSign,
+  History,
+} from "lucide-react";
 import AlterarPrecoModal from "./AlterarPrecoModal";
+import HistoricoPrecoModal from "./HistoricoPrecoModal";
 
 interface Produto {
   _id: string;
@@ -49,6 +56,7 @@ export default function ProdutoTable({
   const [sortField, setSortField] = useState<SortField>("nome");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [modalOpen, setModalOpen] = useState(false);
+  const [historicoModalOpen, setHistoricoModalOpen] = useState(false);
   const [produtoSelecionado, setProdutoSelecionado] = useState<Produto | null>(
     null
   );
@@ -119,6 +127,16 @@ export default function ProdutoTable({
 
   const handleFecharModal = () => {
     setModalOpen(false);
+    setProdutoSelecionado(null);
+  };
+
+  const handleAbrirHistoricoModal = (produto: Produto) => {
+    setProdutoSelecionado(produto);
+    setHistoricoModalOpen(true);
+  };
+
+  const handleFecharHistoricoModal = () => {
+    setHistoricoModalOpen(false);
     setProdutoSelecionado(null);
   };
 
@@ -292,6 +310,14 @@ export default function ProdutoTable({
                   >
                     <DollarSign className="h-4 w-4 mr-1" />
                   </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleAbrirHistoricoModal(produto)}
+                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                  >
+                    <History className="h-4 w-4 mr-1" />
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>
@@ -306,6 +332,15 @@ export default function ProdutoTable({
           isOpen={modalOpen}
           onClose={handleFecharModal}
           onSave={handleSalvarPreco}
+        />
+      )}
+
+      {/* Modal de histórico de preços */}
+      {produtoSelecionado && (
+        <HistoricoPrecoModal
+          produto={produtoSelecionado}
+          isOpen={historicoModalOpen}
+          onClose={handleFecharHistoricoModal}
         />
       )}
     </>

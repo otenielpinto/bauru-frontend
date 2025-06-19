@@ -68,17 +68,17 @@ const data = {
       ],
     },
 
-    {
-      title: "Cadastro",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "Configuracao",
-          url: "/mdfe/config",
-        },
-      ],
-    },
+    // {
+    //   title: "Cadastro",
+    //   url: "#",
+    //   icon: Settings2,
+    //   items: [
+    //     {
+    //       title: "Configuracao",
+    //       url: "/mdfe/config",
+    //     },
+    //   ],
+    // },
 
     {
       title: "Suporte",

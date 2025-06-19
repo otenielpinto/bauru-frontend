@@ -13,6 +13,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   ChevronDown,
   ChevronUp,
   Edit,
@@ -285,7 +290,21 @@ export default function ProdutoTable({
               Preço Venda
               {getSortIcon("preco")}
             </TableHead>
-            <TableHead>Markup</TableHead>
+            <TableHead>
+              <Tooltip>
+                <TooltipTrigger>
+                  <span>Markup</span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    Base de cálculo: Custo de Composição
+                    <br />
+                    Exemplo: Se o Custo de Composição é R$ 100,00 e o Markup é
+                    2, o Preço será R$ 200,00.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TableHead>
             <TableHead>Preço Calculado</TableHead>
             <TableHead>Aplicar</TableHead>
             <TableHead>Ações</TableHead>

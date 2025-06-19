@@ -5,6 +5,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { searchProdutos } from "@/actions/actProduto";
 import { getAllCategorias } from "@/actions/actCategoria";
 import { getAllGrades } from "@/actions/actGrade";
+import { getServiceByName } from "@/actions/actService";
+import { formatDateTimeBrazil } from "@/lib/brazil-datetime";
 import ProdutoTable from "@/components/produto/ProdutoTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -126,6 +128,14 @@ export default function ProdutoPage() {
     queryKey: ["grades"],
     queryFn: () => getAllGrades(),
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // React Query para buscar o serviço de importação do Tiny (últimos 7 dias)
+  const { data: tinyImportService } = useQuery({
+    queryKey: ["service", "importarProdutoTinyDiario_ultimos_7dias"],
+    queryFn: () => getServiceByName("importarProdutoTinyDiario_ultimos_7dias"),
+    staleTime: 60 * 60 * 1000, // Cache de 60 minutos
+    gcTime: 60 * 60 * 1000, // 60 minutos
   });
 
   // React Query for product search
@@ -551,20 +561,32 @@ export default function ProdutoPage() {
 
                 {/* Possui Estrutura - Último campo */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="sys_has_estrutura_produto">
-                      Possui Estrutura
-                    </Label>
-                    <Checkbox
-                      id="sys_has_estrutura_produto"
-                      checked={searchForm.sys_has_estrutura_produto === "true"}
-                      onCheckedChange={(checked) =>
-                        handleInputChange(
-                          "sys_has_estrutura_produto",
-                          checked ? "true" : "false"
-                        )
-                      }
-                    />
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="sys_has_estrutura_produto">
+                        Possui Estrutura
+                      </Label>
+                      <Checkbox
+                        id="sys_has_estrutura_produto"
+                        checked={
+                          searchForm.sys_has_estrutura_produto === "true"
+                        }
+                        onCheckedChange={(checked) =>
+                          handleInputChange(
+                            "sys_has_estrutura_produto",
+                            checked ? "true" : "false"
+                          )
+                        }
+                      />
+                    </div>
+                    {tinyImportService && (tinyImportService as any)?.last && (
+                      <span className="text-xs text-green-600">
+                        Última importação do Tiny:{" "}
+                        {formatDateTimeBrazil(
+                          new Date((tinyImportService as any).last)
+                        )}
+                      </span>
+                    )}
                   </div>
                 </div>
 

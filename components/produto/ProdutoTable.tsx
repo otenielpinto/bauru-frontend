@@ -11,12 +11,14 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   ChevronDown,
   ChevronUp,
   Edit,
   DollarSign,
   History,
+  Check,
 } from "lucide-react";
 import AlterarPrecoModal from "./AlterarPrecoModal";
 import HistoricoPrecoModal from "./HistoricoPrecoModal";
@@ -60,6 +62,12 @@ export default function ProdutoTable({
   const [produtoSelecionado, setProdutoSelecionado] = useState<Produto | null>(
     null
   );
+  const [markupValues, setMarkupValues] = useState<Record<string, number | "">>(
+    {}
+  );
+  const [precoCalculadoValues, setPrecoCalculadoValues] = useState<
+    Record<string, number | "">
+  >({});
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) {
@@ -190,6 +198,39 @@ export default function ProdutoTable({
     }
   };
 
+  const handleMarkupChange = (produtoId: string, valor: string) => {
+    const markupNum = valor === "" ? "" : parseFloat(valor);
+    setMarkupValues((prev) => ({ ...prev, [produtoId]: markupNum }));
+
+    // Calcular preço baseado no markup
+    const produto = produtos.find((p) => p._id === produtoId);
+    if (produto && markupNum !== "" && !isNaN(markupNum as number)) {
+      const custoBase =
+        produto.sys_total_preco_custo || produto.preco_custo || 0;
+      const novoPreco = custoBase * (markupNum as number);
+      setPrecoCalculadoValues((prev) => ({
+        ...prev,
+        [produtoId]: novoPreco,
+      }));
+    } else {
+      setPrecoCalculadoValues((prev) => ({ ...prev, [produtoId]: "" }));
+    }
+  };
+
+  const handleAplicarMarkup = async (produto: Produto) => {
+    const precoCalculado = precoCalculadoValues[produto._id];
+    if (precoCalculado && typeof precoCalculado === "number") {
+      try {
+        await handleSalvarPreco(produto.id || "", precoCalculado);
+        // Limpar os valores após aplicar
+        setMarkupValues((prev) => ({ ...prev, [produto._id]: "" }));
+        setPrecoCalculadoValues((prev) => ({ ...prev, [produto._id]: "" }));
+      } catch (error) {
+        console.error("Erro ao aplicar markup:", error);
+      }
+    }
+  };
+
   return (
     <>
       <Table>
@@ -244,6 +285,9 @@ export default function ProdutoTable({
               Preço Venda
               {getSortIcon("preco")}
             </TableHead>
+            <TableHead>Markup</TableHead>
+            <TableHead>Preço Calculado</TableHead>
+            <TableHead>Aplicar</TableHead>
             <TableHead>Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -287,6 +331,42 @@ export default function ProdutoTable({
                       currency: "BRL",
                     })
                   : "-"}
+              </TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  placeholder="Markup"
+                  step="0.01"
+                  min="0"
+                  value={markupValues[produto._id] || ""}
+                  onChange={(e) =>
+                    handleMarkupChange(produto._id, e.target.value)
+                  }
+                  className="w-[100px] text-right"
+                />
+              </TableCell>
+              <TableCell className="text-right">
+                {precoCalculadoValues[produto._id] !== undefined &&
+                precoCalculadoValues[produto._id] !== ""
+                  ? (
+                      precoCalculadoValues[produto._id] as number
+                    ).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })
+                  : "-"}
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleAplicarMarkup(produto)}
+                  disabled={!precoCalculadoValues[produto._id]}
+                  className="text-green-600 border-green-200 hover:bg-green-50 disabled:opacity-50"
+                >
+                  <Check className="h-4 w-4 mr-1" />
+                  Aplicar
+                </Button>
               </TableCell>
               <TableCell>
                 <div className="flex gap-2">

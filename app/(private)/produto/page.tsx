@@ -95,6 +95,7 @@ export default function ProdutoPage() {
     useState<ProdutoSearchForm | null>(null);
 
   const itemsPerPage = 100;
+  const databaseUpdateTask = "DatabaseUpdateTask";
 
   // Invalidate cache when component mounts to ensure fresh data
   useEffect(() => {
@@ -132,8 +133,8 @@ export default function ProdutoPage() {
 
   // React Query para buscar o serviço de importação do Tiny (últimos 7 dias)
   const { data: tinyImportService } = useQuery({
-    queryKey: ["service", "importarProdutoTinyDiario_ultimos_7dias"],
-    queryFn: () => getServiceByName("importarProdutoTinyDiario_ultimos_7dias"),
+    queryKey: ["service", databaseUpdateTask],
+    queryFn: () => getServiceByName(databaseUpdateTask),
     staleTime: 60 * 60 * 1000, // Cache de 60 minutos
     gcTime: 60 * 60 * 1000, // 60 minutos
   });

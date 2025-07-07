@@ -319,19 +319,11 @@ export default function ProdutoTable({
               </TableCell>
               <TableCell>{produto.nome || "-"}</TableCell>
               <TableCell>
-                {produto.preco_custo
-                  ? produto.preco_custo.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })
-                  : "-"}
+                {produto.preco_custo ? produto.preco_custo.toFixed(2) : "-"}
               </TableCell>
               <TableCell>
                 {produto.sys_total_preco_custo
-                  ? produto.sys_total_preco_custo.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })
+                  ? produto.sys_total_preco_custo.toFixed(2)
                   : "-"}
               </TableCell>
               <TableCell>
@@ -341,7 +333,7 @@ export default function ProdutoTable({
               </TableCell>
               <TableCell>
                 {produto.sys_margem_atual
-                  ? `R$ ${produto.sys_margem_atual.toFixed(2)}`
+                  ? `${produto.sys_margem_atual.toFixed(2)}`
                   : "-"}
               </TableCell>
               <TableCell>
@@ -349,12 +341,7 @@ export default function ProdutoTable({
                   <Tooltip>
                     <TooltipTrigger>
                       <span>
-                        {produto.preco
-                          ? produto.preco.toLocaleString("pt-BR", {
-                              style: "currency",
-                              currency: "BRL",
-                            })
-                          : "-"}
+                        {produto.preco ? produto.preco.toFixed(2) : "-"}
                       </span>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -382,10 +369,7 @@ export default function ProdutoTable({
                     </TooltipContent>
                   </Tooltip>
                 ) : produto.preco ? (
-                  produto.preco.toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })
+                  produto.preco.toFixed(2)
                 ) : (
                   "-"
                 )}
@@ -406,12 +390,7 @@ export default function ProdutoTable({
               <TableCell className="text-right">
                 {precoCalculadoValues[produto._id] !== undefined &&
                 precoCalculadoValues[produto._id] !== ""
-                  ? (
-                      precoCalculadoValues[produto._id] as number
-                    ).toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })
+                  ? (precoCalculadoValues[produto._id] as number).toFixed(2)
                   : "-"}
               </TableCell>
               <TableCell>
@@ -430,7 +409,8 @@ export default function ProdutoTable({
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
-                    size="sm"
+                    size="icon"
+                    title="Editar no Tiny"
                     onClick={() => {
                       window.open(
                         `https://erp.tiny.com.br/produtos#edit/${produto.id}`,
@@ -442,7 +422,8 @@ export default function ProdutoTable({
                   </Button>
                   <Button
                     variant="outline"
-                    size="sm"
+                    size="icon"
+                    title="Ajuste fino de preços"
                     onClick={() => handleAbrirModal(produto)}
                     className="text-green-600 border-green-200 hover:bg-green-50"
                   >
@@ -450,7 +431,8 @@ export default function ProdutoTable({
                   </Button>
                   <Button
                     variant="outline"
-                    size="sm"
+                    size="icon"
+                    title="Histórico de mudanças de preço"
                     onClick={() => handleAbrirHistoricoModal(produto)}
                     className="text-blue-600 border-blue-200 hover:bg-blue-50"
                   >

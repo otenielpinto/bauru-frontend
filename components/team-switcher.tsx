@@ -21,9 +21,9 @@ import {
 
 type Team = {
   id: string;
-  nome: string;
+  razao_social: string;
   fantasia: string;
-  cpfcnpj: string;
+  cnpj_cpf: string;
 };
 
 export function TeamSwitcher({ teams }: { teams: Team[] }) {
@@ -51,10 +51,10 @@ export function TeamSwitcher({ teams }: { teams: Team[] }) {
               {activeTeam ? (
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    {activeTeam?.nome || "Selecione uma empresa"}
+                    {activeTeam?.razao_social || "Selecione uma empresa"}
                   </span>
                   <span className="truncate text-xs">
-                    {activeTeam?.cpfcnpj}
+                    {activeTeam?.cnpj_cpf}
                   </span>
                 </div>
               ) : null}
@@ -73,14 +73,14 @@ export function TeamSwitcher({ teams }: { teams: Team[] }) {
             </DropdownMenuLabel>
             {teams?.map((team, index) => (
               <DropdownMenuItem
-                key={team?.nome}
+                key={team?.razao_social}
                 onClick={() => setActiveTeam(team)}
                 className="gap-2 p-2"
               >
                 <div className="flex size-6 items-center justify-center rounded-sm border">
                   {/* <team.logo className="size-4 shrink-0" /> */}
                 </div>
-                {team?.nome}
+                {team?.razao_social}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
             ))}

@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import ReactQueryProvider from "@/providers/react-query";
 
 export const metadata: Metadata = {
-  title: "Gestor de Custos",
+  title: "Gestor de Preços",
   description:
     "Sistema de Gestão de Custos de Produtos - Controle completo de custos, precificação e análise de rentabilidade de produtos.",
 };

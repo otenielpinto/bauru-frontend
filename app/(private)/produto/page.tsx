@@ -299,29 +299,18 @@ export default function ProdutoPage() {
       codigo: produto.codigo || "-",
       nome: produto.nome || "-",
       preco_custo_formatted: produto.preco_custo
-        ? produto.preco_custo.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          })
+        ? produto.preco_custo.toFixed(2)
         : "-",
       sys_total_preco_custo_formatted: produto.sys_total_preco_custo
-        ? produto.sys_total_preco_custo.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          })
+        ? produto.sys_total_preco_custo.toFixed(2)
         : "-",
       sys_markup_atual_formatted: produto.sys_markup_atual
-        ? `${produto.sys_markup_atual.toFixed(2)}`
+        ? produto.sys_markup_atual.toFixed(2)
         : "-",
       sys_margem_atual_formatted: produto.sys_margem_atual
-        ? `R$ ${produto.sys_margem_atual.toFixed(2)}`
+        ? produto.sys_margem_atual.toFixed(2)
         : "-",
-      preco_formatted: produto.preco
-        ? produto.preco.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          })
-        : "-",
+      preco_formatted: produto.preco ? produto.preco.toFixed(2) : "-",
     }));
 
     // Gerar nome do arquivo baseado na data/hora atual

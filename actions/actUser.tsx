@@ -16,7 +16,7 @@ export async function getUserEmpresas(userId: string) {
   }
   //Sempre gravar o array com int32 para evitar problemas de comparação ****
   const empresas = await clientdb
-    .collection("empresa")
+    .collection("tmp_empresa")
     .find({ id_tenant: user.id_tenant })
     .toArray();
   const filteredEmpresas = empresas.filter((empresa: any) =>
